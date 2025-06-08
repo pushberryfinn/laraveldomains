@@ -1,52 +1,93 @@
-# Very short description of the package
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/pushberryfinn/laravel-domains.svg?style=flat-square)](https://packagist.org/packages/pushberryfinn/laravel-domains)
-[![Total Downloads](https://img.shields.io/packagist/dt/pushberryfinn/laravel-domains.svg?style=flat-square)](https://packagist.org/packages/pushberryfinn/laravel-domains)
-![GitHub Actions](https://github.com/pushberryfinn/laravel-domains/actions/workflows/main.yml/badge.svg)
+# Laravel Domains
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+A Laravel package to manage and create modular domains inside your Laravel app.
+
+## Overview
+
+This package helps you organize your Laravel application by grouping related code (models, controllers, migrations, routes, commands, etc.) into **domains** — folders inside `app/Domains`. It supports automatic loading of routes, migrations, and commands per domain.
+
+---
+
+## Features
+
+- Generate domain folders with a service provider, routes, and basic structure
+- Artisan commands to create domain resources like models, controllers, and migrations inside the domain folder
+- Automatic discovery of all domains under `app/Domains` and bootstrapping routes, migrations, and commands
+- Command auto-registration inside each domain’s `Console/Commands` folder
+
+---
 
 ## Installation
 
-You can install the package via composer:
+Require the package via composer:
 
 ```bash
 composer require pushberryfinn/laravel-domains
 ```
 
-## Usage
-
-```php
-// Usage description here
-```
-
-### Testing
+Publish the package's service provider (if needed):
 
 ```bash
-composer test
+php artisan vendor:publish --provider="Pushberryfinn\LaravelDomains\LaravelDomainsServiceProvider"
 ```
 
-### Changelog
+---
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+## Usage
 
-## Contributing
+### Create a domain
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+```bash
+php artisan domain:make Doctors
+```
 
-### Security
+This will create:
 
-If you discover any security related issues, please email atniqii@gmail.com instead of using the issue tracker.
+- `app/Domains/Doctors`
+- `DomainsServiceProvider.php` inside the domain folder
+- A `routes/api.php` file
+- The necessary folder structure for models, controllers, commands, migrations, etc.
 
-## Credits
+### Generate domain resources
 
--   [Atdhe Krasniqi](https://github.com/pushberryfinn)
--   [All Contributors](../../contributors)
+Example: Create a model inside the Doctors domain
+
+```bash
+php artisan domain:make-model Doctor --domain=Doctors
+```
+
+Similarly, you can create controllers, migrations, and commands scoped to your domain:
+
+```bash
+php artisan domain:make-controller DoctorController --domain=Doctors
+php artisan domain:make-migration create_doctors_table --domain=Doctors
+php artisan domain:make-command SyncDoctors --domain=Doctors
+```
+
+---
+
+## How it works
+
+- Your domains live inside `app/Domains`.
+- The main `DomainsServiceProvider` automatically loads routes, migrations, and commands from each domain.
+- Commands are auto-registered if placed inside the domain's `Console/Commands` directory.
+
+---
+
+## Requirements
+
+- PHP 7.4 or higher
+- Laravel 8.x
+
+---
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). See the [LICENSE](LICENSE) file for details.
 
-## Laravel Package Boilerplate
+---
 
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
+## Author
+
+Atdhe Krasniqi — [GitHub](https://github.com/pushberryfinn)

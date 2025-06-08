@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Domains;
+
+use Illuminate\Support\ServiceProvider;
+
+class DomainsServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+        // every folder in app/Domains is considered a domain
+        $domains = array_filter(glob(app_path('Domains/*')), 'is_dir');
+
+        foreach ($domains as $domain) {
+            $this->loadMigrationsFrom($domain . '/database/migrations/');
+
+            $routes = $domain . '/routes/api.php';
+            if (file_exists($routes)) {
+                $this->loadRoutesFrom($routes);
+            }
+
+            $commandsPath = $domain . '/Console/Commands';
+            if (is_dir($commandsPath)) {
+                $this->loadCommandsFrom($commandsPath, $domain);
+            }
+        }
+    }
+
+    protected function loadCommandsFrom($path, $domain)
+    {
+        $commandFiles = glob($path . '/*.php');
+
+        foreach ($commandFiles as $commandFile) {
+            $className = $this->getClassFromFile($commandFile, $domain);
+            if ($className) {
+                $this->commands($className);
+            }
+        }
+    }
+
+    protected function getClassFromFile($file, $domain)
+    {
+        $namespace = 'App\\Domains\\' . basename($domain) . '\\Console\\Commands';
+        $className = $namespace . '\\' . basename($file, '.php');
+
+        return class_exists($className) ? $className : null;
+    }
+}

@@ -1,0 +1,9 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('api/{{domain}}')->group(function () {
+    Route::get('/', function () {
+        return response()->json(['message' => 'Welcome to the {{domain}} domain!']);
+    });
+});
