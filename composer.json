@@ -1,9 +1,12 @@
 {
     "name": "pushberryfinn/laravel-domains",
-    "description": "A laravel package that manges, creates domains(modules)",
+    "description": "A Laravel package to manage and create modular domains inside your app",
     "keywords": [
-        "pushberryfinn",
-        "laravel-domains"
+        "laravel",
+        "domains",
+        "modules",
+        "ddd",
+        "pushberryfinn"
     ],
     "homepage": "https://github.com/pushberryfinn/laravel-domains",
     "license": "MIT",
@@ -20,8 +23,8 @@
         "illuminate/support": "^11.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^6.0",
-        "phpunit/phpunit": "^9.0"
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^11.0"
     },
     "autoload": {
         "psr-4": {
@@ -36,7 +39,6 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
     },
     "config": {
         "sort-packages": true
@@ -50,5 +52,7 @@
                 "LaravelDomains": "Pushberryfinn\\LaravelDomains\\LaravelDomainsFacade"
             }
         }
-    }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

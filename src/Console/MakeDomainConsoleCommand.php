@@ -2,18 +2,19 @@
 
 namespace Pushberryfinn\LaravelDomains\Console;
 
-use Illuminate\Foundation\Console\ModelMakeCommand;
+use Illuminate\Foundation\Console\ConsoleMakeCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
-class MakeDomainModelCommand extends ModelMakeCommand
+class MakeDomainConsoleCommand extends ConsoleMakeCommand
 {
-    protected $name = 'domain:make-model';
+    protected $name = 'domain:make-command';
+
+    protected $description = 'Create a new Artisan command inside a domain';
 
     protected function getDefaultNamespace($rootNamespace)
     {
-        $domain = $this->option('domain');
-        return $rootNamespace . '\\Domains\\' . $domain . '\\Models';
+        return $rootNamespace . '\\Domains\\' . $this->option('domain') . '\\Console\\Commands';
     }
 
     protected function getPath($name)
@@ -25,7 +26,7 @@ class MakeDomainModelCommand extends ModelMakeCommand
     protected function getOptions()
     {
         return array_merge(parent::getOptions(), [
-            ['domain', null, InputOption::VALUE_REQUIRED, 'The domain name to use'],
+            ['domain', null, InputOption::VALUE_REQUIRED, 'The domain name'],
         ]);
     }
 }

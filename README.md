@@ -1,35 +1,36 @@
 
 # Laravel Domains
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/pushberryfinn/laravel-domains.svg)](https://packagist.org/packages/pushberryfinn/laravel-domains)
+[![Tests](https://github.com/pushberryfinn/laravel-domains/actions/workflows/tests.yml/badge.svg)](https://github.com/pushberryfinn/laravel-domains/actions/workflows/tests.yml)
+[![License](https://img.shields.io/packagist/l/pushberryfinn/laravel-domains.svg)](https://packagist.org/packages/pushberryfinn/laravel-domains)
+[![PHP Version](https://img.shields.io/packagist/php-v/pushberryfinn/laravel-domains.svg)](https://packagist.org/packages/pushberryfinn/laravel-domains)
+
 A Laravel package to manage and create modular domains inside your Laravel app.
 
 ## Overview
 
-This package helps you organize your Laravel application by grouping related code (models, controllers, migrations, routes, commands, etc.) into **domains** — folders inside `app/Domains`. It supports automatic loading of routes, migrations, and commands per domain.
+This package helps you organise your Laravel application by grouping related code (models, controllers, migrations, routes, commands, etc.) into **domains** — self-contained folders under `app/Domains`. Routes, migrations, and commands are automatically discovered and loaded for each domain.
 
 ---
 
-## Features
+## Requirements
 
-- Generate domain folders with a service provider, routes, and basic structure
-- Artisan commands to create domain resources like models, controllers, and migrations inside the domain folder
-- Automatic discovery of all domains under `app/Domains` and bootstrapping routes, migrations, and commands
-- Command auto-registration inside each domain’s `Console/Commands` folder
+- PHP 8.2 or higher
+- Laravel 11.x
 
 ---
 
 ## Installation
 
-Require the package via composer:
-
 ```bash
 composer require pushberryfinn/laravel-domains
 ```
 
-Publish the package's service provider (if needed):
+Optionally publish the config file:
 
 ```bash
-php artisan vendor:publish --provider="Pushberryfinn\LaravelDomains\LaravelDomainsServiceProvider"
+php artisan vendor:publish --tag=laravel-domains-config
 ```
 
 ---
@@ -42,26 +43,47 @@ php artisan vendor:publish --provider="Pushberryfinn\LaravelDomains\LaravelDomai
 php artisan domain:make Doctors
 ```
 
-This will create:
+This creates the following structure under `app/Domains`:
 
-- `app/Domains/Doctors`
-- `DomainsServiceProvider.php` inside the domain folder
-- A `routes/api.php` file
-- The necessary folder structure for models, controllers, commands, migrations, etc.
+```
+app/Domains/
+├── DomainsServiceProvider.php   ← created once on first domain
+└── Doctors/
+    ├── Console/Commands/
+    ├── Http/Controllers/
+    ├── Http/Requests/
+    ├── Models/
+    ├── database/migrations/
+    └── routes/api.php
+```
+
+> **Important:** After running `domain:make` for the first time, register `DomainsServiceProvider` in `bootstrap/providers.php`:
+>
+> ```php
+> return [
+>     App\Providers\AppServiceProvider::class,
+>     App\Domains\DomainsServiceProvider::class,
+> ];
+> ```
+
+---
 
 ### Generate domain resources
 
-Example: Create a model inside the Doctors domain
-
 ```bash
+# Model
 php artisan domain:make-model Doctor --domain=Doctors
-```
 
-Similarly, you can create controllers, migrations, and commands scoped to your domain:
-
-```bash
+# Controller
 php artisan domain:make-controller DoctorController --domain=Doctors
+
+# Form Request
+php artisan domain:make-request StoreDoctorRequest --domain=Doctors
+
+# Migration
 php artisan domain:make-migration create_doctors_table --domain=Doctors
+
+# Artisan command
 php artisan domain:make-command SyncDoctors --domain=Doctors
 ```
 
@@ -69,22 +91,27 @@ php artisan domain:make-command SyncDoctors --domain=Doctors
 
 ## How it works
 
-- Your domains live inside `app/Domains`.
-- The main `DomainsServiceProvider` automatically loads routes, migrations, and commands from each domain.
-- Commands are auto-registered if placed inside the domain's `Console/Commands` directory.
+- Every folder inside `app/Domains` is treated as a domain.
+- `DomainsServiceProvider` (placed in `app/Domains`) automatically loads each domain's migrations, routes, and console commands.
+- Console commands placed in `{Domain}/Console/Commands/` are auto-registered.
 
 ---
 
-## Requirements
+## Facade
 
-- PHP 7.4 or higher
-- Laravel 8.x
+You can use the `LaravelDomains` facade to list all registered domains at runtime:
+
+```php
+use LaravelDomains;
+
+$domains = LaravelDomains::domains(); // ['Doctors', 'Patients', ...]
+```
 
 ---
 
 ## License
 
-The MIT License (MIT). See the [LICENSE](LICENSE) file for details.
+The MIT License (MIT). See the [LICENSE](LICENSE.md) file for details.
 
 ---
 

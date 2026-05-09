@@ -52,7 +52,8 @@ class MakeDomainCommand extends Command
         // 4. Create subfolders
         $subfolders = [
             'Console/Commands',
-            'Controllers',
+            'Http/Controllers',
+            'Http/Requests',
             'database/migrations',
             'routes',
             'Models',
